@@ -26,17 +26,11 @@ export default function Home() {
 
   const tasks = trpc.taskRouter.list.useQuery()
 
-  const gettask = (id: string | string[] | undefined) => {
-    if (tasks.data) {
-      const ans = tasks.data.tasks.find((task) => task.id === id?.toString())
-      if (ans) {
-        return ans
-      } else {
-        return defaultTask()
-      }
-    } else {
-      return defaultTask()
-    }
+  const getSelectedTask = (id: string | string[] | undefined) => {
+    return (
+      tasks.data?.tasks.find((task) => task.id === id?.toString()) ??
+      defaultTask()
+    )
   }
 
   const router = useRouter()
@@ -52,13 +46,13 @@ export default function Home() {
                 <Typography variant="h5" gutterBottom>
                   Task List
                 </Typography>
-                {tasks.data && <TaskList tasks={tasks.data.tasks} />}
+                {<TaskList tasks={tasks.data.tasks} />}
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="h5" gutterBottom>
                   {id ? 'Details and Edit Task' : 'Create New Task'}
                 </Typography>
-                {gettask(id) && <TaskDetails task={gettask(id)} />}
+                <TaskDetails task={getSelectedTask(id)} />
               </Grid>
             </Grid>
           ) : (
