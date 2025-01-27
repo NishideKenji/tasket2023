@@ -3,6 +3,16 @@ import { z } from 'zod'
 import { procedure, router } from '../trpc'
 
 export const taskRouter = router({
+  list: procedure.query(async (opts) => {
+    if (opts.ctx.session) {
+      const tasks = await opts.ctx.prisma.task.findMany()
+
+      return {
+        tasks: tasks,
+      }
+    }
+  }),
+
   create: procedure
     .input(
       z.object({
