@@ -18,7 +18,7 @@ export const registerRouter = router({
         email: opt.input.email,
         password: opt.input.password,
       }
-      console.log(Input)
+      //console.log(Input)
 
       const saltRounds = 10
       const password = Input.password
@@ -32,7 +32,7 @@ export const registerRouter = router({
         },
       })
 
-      console.log(newUser)
+      //console.log(newUser)
       // 戻り値。
       const Answer = {
         username: opt.input.username,
