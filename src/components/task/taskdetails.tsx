@@ -7,6 +7,8 @@ import {
   FormControlLabel,
   TextField,
 } from '@mui/material'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import type { Task } from '@prisma/client'
 import { TRPCClientError } from '@trpc/client'
 import { enqueueSnackbar } from 'notistack'
@@ -91,6 +93,38 @@ export default function TaskDetails({ task }: Props) {
           }
         />
         <br />
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Controller
+            name="end_date_scheduled"
+            control={control}
+            render={({ field: { onChange, onBlur, ...field } }) => (
+              <DatePicker<Date>
+                {...field}
+                onChange={(value) => {
+                  onChange(value)
+                  onBlur()
+                }}
+              />
+            )}
+          />
+        </LocalizationProvider>
+        <br />
+        <br />
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Controller
+            name="end_date_actual"
+            control={control}
+            render={({ field: { onChange, onBlur, ...field } }) => (
+              <DatePicker<Date>
+                {...field}
+                onChange={(value) => {
+                  onChange(value)
+                  onBlur()
+                }}
+              />
+            )}
+          />
+        </LocalizationProvider>
         <br />
         <Controller
           name="is_finish"
@@ -104,7 +138,6 @@ export default function TaskDetails({ task }: Props) {
             />
           )}
         />
-        <br />
         <br />
         <Button
           type="submit"

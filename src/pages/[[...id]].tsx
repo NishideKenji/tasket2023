@@ -14,7 +14,7 @@ const defaultTask = (): Task => {
   return {
     id: '',
     title: '',
-    is_finish: true,
+    is_finish: false,
     description: '',
     end_date_scheduled: null,
     end_date_actual: null,
@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <Container maxWidth={false}>
-      <Box textAlign="center" p={10}>
+      <Box p={10}>
         {session ? (
           tasks.data ? (
             <Grid container spacing={10}>
