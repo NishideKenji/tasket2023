@@ -33,6 +33,7 @@ const taskCreateSchema = z.object({
 
 export default function TaskDetails({ task }: Props) {
   const create = trpc.taskRouter.create.useMutation()
+  const update = trpc.taskRouter.update.useMutation()
 
   const { register, handleSubmit, control, formState, reset, setError } =
     useForm({
@@ -45,18 +46,35 @@ export default function TaskDetails({ task }: Props) {
     <Box>
       <form
         onSubmit={handleSubmit(async (value) => {
-          try {
-            const res = await create.mutateAsync(value)
-            enqueueSnackbar('Create Success', { variant: 'success' })
-            reset(value)
-          } catch (error) {
-            enqueueSnackbar('Create error:', { variant: 'error' })
+          if (task.id === '') {
+            try {
+              const res = await create.mutateAsync(value)
+              enqueueSnackbar('Create Success', { variant: 'success' })
+              reset(value)
+            } catch (error) {
+              enqueueSnackbar('Create error:', { variant: 'error' })
 
-            if (error instanceof TRPCClientError) {
-              setError('root', {
-                type: 'manual',
-                message: error.message,
-              })
+              if (error instanceof TRPCClientError) {
+                setError('root', {
+                  type: 'manual',
+                  message: error.message,
+                })
+              }
+            }
+          } else {
+            try {
+              const res = await update.mutateAsync(value)
+              enqueueSnackbar('Updated Success', { variant: 'success' })
+              reset(value)
+            } catch (error) {
+              enqueueSnackbar('Updated error:', { variant: 'error' })
+
+              if (error instanceof TRPCClientError) {
+                setError('root', {
+                  type: 'manual',
+                  message: error.message,
+                })
+              }
             }
           }
         })}
@@ -146,7 +164,7 @@ export default function TaskDetails({ task }: Props) {
             !formState.isValid || !formState.isDirty || formState.isSubmitting
           }
         >
-          Create
+          {task.id === '' ? 'Create' : 'Update'}
         </Button>
         {formState.isSubmitted && !formState.isSubmitSuccessful && (
           <Alert severity="error">{formState.errors.root?.message}</Alert>
