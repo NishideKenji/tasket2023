@@ -1,5 +1,6 @@
 import { Box, Button, Container, Grid, Typography } from '@mui/material'
 import { Inter } from 'next/font/google'
+import { useRouter } from 'next/router'
 import { signIn, useSession } from 'next-auth/react'
 
 import TaskDetails from '@/components/task/taskdetails'
@@ -13,6 +14,9 @@ export default function Home() {
 
   const tasks = trpc.taskRouter.list.useQuery()
 
+  const router = useRouter()
+  const { id } = router.query
+
   return (
     <Container maxWidth={false}>
       <Box textAlign="center" p={10}>
@@ -20,11 +24,14 @@ export default function Home() {
           <Grid container spacing={10}>
             <Grid item xs={6}>
               <Typography variant="h5" gutterBottom>
-                Create New Task
+                ID : {id}
               </Typography>
               {tasks.data && <TaskList tasks={tasks.data.tasks} />}
             </Grid>
             <Grid item xs={6}>
+              <Typography variant="h5" gutterBottom>
+                Create New Task
+              </Typography>
               <TaskDetails
                 task={{
                   id: '',
