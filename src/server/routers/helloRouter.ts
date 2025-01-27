@@ -14,4 +14,7 @@ export const helloRouter = router({
         greeting: `hello ${opts.input.text} !!!!!`,
       }
     }),
+  today: procedure.query(() => {
+    return new Date()
+  }),
 })

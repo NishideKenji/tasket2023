@@ -7,7 +7,8 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const hello = trpc.helloRouter.hello.useQuery({ text: 'client' })
-  if (!hello.data) {
+  const today = trpc.helloRouter.today.useQuery()
+  if (!hello.data || !today.data) {
     return <div>Loading...</div>
   }
 
@@ -24,6 +25,7 @@ export default function Home() {
         </Box>
         <div>
           <p>{hello.data.greeting}</p>
+          <p>{new Date(today.data).getFullYear()}</p>
         </div>
       </Container>
     </main>
