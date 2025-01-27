@@ -8,6 +8,9 @@ export default function NavBar() {
         <Typography variant="h6" style={{ flexGrow: 1 }}>
           Logo
         </Typography>
+        <Link href="/register">
+          <Button color="inherit">Register</Button>
+        </Link>
         <Link href="/">
           <Button color="inherit">Home</Button>
         </Link>
