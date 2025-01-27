@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
@@ -7,9 +8,13 @@ import {
   TextField,
 } from '@mui/material'
 import type { Task } from '@prisma/client'
+import { TRPCClientError } from '@trpc/client'
+import { enqueueSnackbar } from 'notistack'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+
+import { trpc } from '@/utils/trpc'
 
 interface Props {
   task: Task
@@ -25,17 +30,33 @@ const taskCreateSchema = z.object({
 })
 
 export default function TaskDetails({ task }: Props) {
-  const { register, handleSubmit, control, formState } = useForm({
-    defaultValues: task,
-    resolver: zodResolver(taskCreateSchema),
-    mode: 'onTouched',
-  })
+  const create = trpc.taskRouter.create.useMutation()
+
+  const { register, handleSubmit, control, formState, reset, setError } =
+    useForm({
+      defaultValues: task,
+      resolver: zodResolver(taskCreateSchema),
+      mode: 'onTouched',
+    })
 
   return (
     <Box>
       <form
-        onSubmit={handleSubmit((value) => {
-          console.log(value)
+        onSubmit={handleSubmit(async (value) => {
+          try {
+            const res = await create.mutateAsync(value)
+            enqueueSnackbar('Create Success', { variant: 'success' })
+            reset(value)
+          } catch (error) {
+            enqueueSnackbar('Create error:', { variant: 'error' })
+
+            if (error instanceof TRPCClientError) {
+              setError('root', {
+                type: 'manual',
+                message: error.message,
+              })
+            }
+          }
         })}
       >
         <TextField
@@ -94,6 +115,9 @@ export default function TaskDetails({ task }: Props) {
         >
           Create
         </Button>
+        {formState.isSubmitted && !formState.isSubmitSuccessful && (
+          <Alert severity="error">{formState.errors.root?.message}</Alert>
+        )}
       </form>
     </Box>
   )
