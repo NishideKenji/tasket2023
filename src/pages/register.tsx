@@ -15,7 +15,7 @@ const taskCreateSchema = z.object({
 export default function RegisterForm() {
   const create = trpc.registerRouter.create.useMutation()
 
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, reset } = useForm({
     defaultValues: {
       username: '',
       email: '',
@@ -29,16 +29,14 @@ export default function RegisterForm() {
     <Container maxWidth="xs">
       <Box>
         <form
-          onSubmit={handleSubmit((value) => {
-            console.log(value)
-            create.mutate(value, {
-              onSuccess: (data) => {
-                console.log('Register Success:', data)
-              },
-              onError: (error) => {
-                console.log('Register error:', error)
-              },
-            })
+          onSubmit={handleSubmit(async (value) => {
+            try {
+              const res = await create.mutateAsync(value)
+              console.log('Register Success:', res)
+              reset(value)
+            } catch (error) {
+              console.log('Register error:', error)
+            }
           })}
         >
           <h3>Register</h3>
