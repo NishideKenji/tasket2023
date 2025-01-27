@@ -6,7 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "run-p -l -c --aggregate-output lint:*",
+    "lint:eslint": "next lint",
+    "lint:prettier": "prettier --check .",
+    "format": "run-s format:prettier format:eslint",
+    "format:eslint": "yarn lint:eslint --fix",
+    "format:prettier": "yarn lint:prettier --write",
+    "typecheck": "tsc",
+    "codegen": "graphql-codegen",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
   "dependencies": {
     "@types/node": "20.5.9",
