@@ -1,10 +1,11 @@
 import bcrypt from 'bcrypt'
+import type { NextAuthOptions } from 'next-auth'
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 import prisma from '@/server/prisma'
 
-export default NextAuth({
+export const nextAuthOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       // サインインフォームに表示する名前 (例: "Sign in with...")
@@ -62,4 +63,6 @@ export default NextAuth({
       },
     }),
   ],
-})
+}
+
+export default NextAuth(nextAuthOptions)
