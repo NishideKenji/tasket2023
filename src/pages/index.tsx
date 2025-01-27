@@ -1,5 +1,6 @@
-import { Box, Container, Typography } from '@mui/material'
+import { Box, Button, Container, Typography } from '@mui/material'
 import { Inter } from 'next/font/google'
+import { signIn } from 'next-auth/react'
 
 import { trpc } from '@/utils/trpc'
 
@@ -22,6 +23,8 @@ export default function Home() {
             Welcome to Our Site
           </Typography>
           <Box mt={4}>discription</Box>
+
+          <Button onClick={() => signIn()}>Login</Button>
         </Box>
         <div>
           <p>{hello.data.greeting}</p>

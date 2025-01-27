@@ -1,6 +1,7 @@
 import type { EmotionCache } from '@emotion/react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import type { AppProps, AppType } from 'next/app'
+import { SessionProvider } from 'next-auth/react'
 import { SnackbarProvider } from 'notistack'
 
 import Layout from '@/components/layout/layout'
@@ -18,16 +19,18 @@ export interface MyAppProps extends AppProps {
 
 const MyApp: AppType = ({ Component, pageProps }: AppProps) => {
   return (
-    <ThemeProvider theme={theme}>
-      <SnackbarProvider
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <CssBaseline />
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </SnackbarProvider>
-    </ThemeProvider>
+    <SessionProvider session={pageProps.session}>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <CssBaseline />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </SessionProvider>
   )
 }
 
