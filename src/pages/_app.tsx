@@ -1,9 +1,10 @@
 import type { EmotionCache } from '@emotion/react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
-import type { AppProps } from 'next/app'
+import type { AppProps, AppType } from 'next/app'
 
 import Layout from '@/components/layout/layout'
 import createEmotionCache from '@/createEmotionCache'
+import { trpc } from '@/utils/trpc'
 
 import theme from '../theme'
 
@@ -14,7 +15,7 @@ export interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache
 }
 
-export default function App({ Component, pageProps }: AppProps) {
+const MyApp: AppType = ({ Component, pageProps }: AppProps) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -24,3 +25,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </ThemeProvider>
   )
 }
+
+export default trpc.withTRPC(MyApp)
