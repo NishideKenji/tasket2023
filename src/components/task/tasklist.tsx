@@ -40,11 +40,11 @@ const TaskList = ({ tasks }: Props) => {
               </TableCell>
               <TableCell>
                 {task.end_date_scheduled &&
-                  format(task.end_date_scheduled, 'MM/dd/yyyy')}
+                  format(task.end_date_scheduled, 'yyyy/MM/dd')}
               </TableCell>
               <TableCell>
                 {task.end_date_actual &&
-                  format(task.end_date_actual, 'MM/dd/yyyy')}
+                  format(task.end_date_actual, 'yyyy/MM/dd')}
               </TableCell>
             </TableRow>
           )

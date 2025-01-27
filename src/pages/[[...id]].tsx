@@ -50,7 +50,7 @@ export default function Home() {
             <Grid container spacing={10}>
               <Grid item xs={6}>
                 <Typography variant="h5" gutterBottom>
-                  ID : {id}
+                  Task List
                 </Typography>
                 {tasks.data && <TaskList tasks={tasks.data.tasks} />}
               </Grid>

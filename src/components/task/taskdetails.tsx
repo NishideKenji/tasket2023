@@ -120,6 +120,8 @@ export default function TaskDetails({ task }: Props) {
             control={control}
             render={({ field: { onChange, onBlur, ...field } }) => (
               <DatePicker<Date>
+                label="End Date Scheduled"
+                format="yyyy/MM/dd"
                 {...field}
                 onChange={(value) => {
                   onChange(value)
@@ -137,6 +139,8 @@ export default function TaskDetails({ task }: Props) {
             control={control}
             render={({ field: { onChange, onBlur, ...field } }) => (
               <DatePicker<Date>
+                label="End Date Actual"
+                format="yyyy/MM/dd"
                 {...field}
                 onChange={(value) => {
                   onChange(value)
