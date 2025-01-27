@@ -1,35 +1,38 @@
 import { Box, Button, Container, Typography } from '@mui/material'
 import { Inter } from 'next/font/google'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 
-import { trpc } from '@/utils/trpc'
+import TaskDetails from '@/components/task/taskdetails'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  const hello = trpc.helloRouter.hello.useQuery({ text: 'client' })
-  const today = trpc.helloRouter.today.useQuery()
-  if (!hello.data || !today.data) {
-    return <div>Loading...</div>
-  }
+  const { data: session } = useSession()
 
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
+    <main>
       <Container maxWidth="md">
         <Box textAlign="center" py={10}>
-          <Typography variant="h2" gutterBottom>
-            Welcome to Our Site
-          </Typography>
-          <Box mt={4}>discription</Box>
-
-          <Button onClick={() => signIn()}>signIn</Button>
+          {session ? (
+            <>
+              <Typography variant="h5" gutterBottom>
+                Create New Task
+              </Typography>
+              <TaskDetails
+                task={{
+                  id: '',
+                  title: '',
+                  is_finish: false,
+                  description: '',
+                  end_date_scheduled: null,
+                  end_date_actual: null,
+                }}
+              />
+            </>
+          ) : (
+            <Button onClick={() => signIn()}>signIn</Button>
+          )}
         </Box>
-        <div>
-          <p>{hello.data.greeting}</p>
-          <p>{today.data.getFullYear()}</p>
-        </div>
       </Container>
     </main>
   )
