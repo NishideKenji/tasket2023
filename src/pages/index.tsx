@@ -25,7 +25,7 @@ export default function Home() {
         </Box>
         <div>
           <p>{hello.data.greeting}</p>
-          <p>{new Date(today.data).getFullYear()}</p>
+          <p>{today.data.getFullYear()}</p>
         </div>
       </Container>
     </main>
