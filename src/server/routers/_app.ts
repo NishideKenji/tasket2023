@@ -1,5 +1,6 @@
 import { router } from '../trpc'
 import { helloRouter } from './helloRouter'
+import { registerRouter } from './registerRouter'
 
 /**
  * This is the primary router for your server.
@@ -8,6 +9,7 @@ import { helloRouter } from './helloRouter'
  */
 export const appRouter = router({
   helloRouter,
+  registerRouter,
 })
 
 // export type definition of API
