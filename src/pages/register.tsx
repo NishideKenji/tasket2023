@@ -1,5 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Box, Button, Container, TextField } from '@mui/material'
+import { Alert, Box, Button, Container, TextField } from '@mui/material'
+import { TRPCClientError } from '@trpc/client'
+import { enqueueSnackbar } from 'notistack'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -15,7 +17,7 @@ const taskCreateSchema = z.object({
 export default function RegisterForm() {
   const create = trpc.registerRouter.create.useMutation()
 
-  const { register, handleSubmit, formState, reset } = useForm({
+  const { register, handleSubmit, formState, reset, setError } = useForm({
     defaultValues: {
       username: '',
       email: '',
@@ -32,10 +34,17 @@ export default function RegisterForm() {
           onSubmit={handleSubmit(async (value) => {
             try {
               const res = await create.mutateAsync(value)
-              console.log('Register Success:', res)
+              enqueueSnackbar('Register Success', { variant: 'success' })
               reset(value)
             } catch (error) {
-              console.log('Register error:', error)
+              enqueueSnackbar('Register error:', { variant: 'error' })
+
+              if (error instanceof TRPCClientError) {
+                setError('root', {
+                  type: 'manual',
+                  message: error.message,
+                })
+              }
             }
           })}
         >
@@ -96,6 +105,9 @@ export default function RegisterForm() {
           >
             Submit
           </Button>
+          {formState.isSubmitted && !formState.isSubmitSuccessful && (
+            <Alert severity="error">{formState.errors.root?.message}</Alert>
+          )}
           {true && (
             //状態を表示したいときはここをtrueにする
             <>
@@ -105,6 +117,12 @@ export default function RegisterForm() {
               {formState.isDirty ? 'Dirty' : 'Not Dirty'}
               <br />
               {formState.isValid ? 'isValid' : 'Not isValid'}
+              <br />
+              {formState.isSubmitted ? 'Submitted' : 'Not Submitted'}
+              <br />
+              {formState.isSubmitSuccessful
+                ? 'SubmitSuccessful'
+                : 'Not SubmitSuccessful'}
               <br />
             </>
           )}
