@@ -3,6 +3,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import type { Metadata } from 'next'
 
 import theme from '../theme'
+import { PageFrame } from './_components/pageframe/pageframe'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -18,7 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          <ThemeProvider theme={theme}>
+            <PageFrame>{children}</PageFrame>
+          </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
