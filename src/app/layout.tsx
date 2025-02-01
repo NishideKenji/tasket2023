@@ -2,6 +2,8 @@ import { ThemeProvider } from '@mui/material/styles'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import type { Metadata } from 'next'
 
+import { TRPCProvider } from '@/trpc/client'
+
 import theme from '../theme'
 import { PageFrame } from './_components/pageframe/pageframe'
 
@@ -20,7 +22,9 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <PageFrame>{children}</PageFrame>
+            <TRPCProvider>
+              <PageFrame>{children}</PageFrame>
+            </TRPCProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
