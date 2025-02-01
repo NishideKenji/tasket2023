@@ -9,6 +9,8 @@ import React, { useState } from 'react'
 import { makeQueryClient } from '@/trpc/query-client'
 import { type AppRouter } from '@/trpc/routers/_app'
 
+import { transformer } from './shared'
+
 /**
  * Client-Side (SPA) 向けの tRPC client.
  */
@@ -36,6 +38,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
       links: [
         httpBatchLink({
           url: '/api/trpc',
+          transformer,
         }),
       ],
     }),

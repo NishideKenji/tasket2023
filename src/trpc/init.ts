@@ -1,6 +1,8 @@
 import { initTRPC } from '@trpc/server'
 import { cache } from 'react'
 
+import { transformer } from './shared'
+
 /**
  * 1. CONTEXT
  *
@@ -30,6 +32,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
   /**
    * @see https://trpc.io/docs/server/data-transformers
    */
+  transformer,
 })
 
 // Base router and procedure helpers
