@@ -1,15 +1,36 @@
-import { GreetingClient } from './_components/greeting-client'
-import { GreetingServer } from './_components/greeting-server'
+'use client'
+
+import { Box, Button, Container, Typography } from '@mui/material'
+import { signIn, useSession } from 'next-auth/react'
+
+import TaskDetails from './task/taskdetails'
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {/* Client Component からの tRPC 問い合わせ. */}
-      <GreetingClient name="Client 1" />
-      <GreetingClient name="Client 2" />
+  const { data: session } = useSession()
 
-      {/* SSR Component からの tRPC 問い合わせ. */}
-      <GreetingServer name="Server 1" />
-    </main>
+  return (
+    <Container maxWidth="md">
+      <Box textAlign="center" py={10}>
+        {session ? (
+          <>
+            <Typography variant="h5" gutterBottom>
+              Create New Task
+            </Typography>
+            <TaskDetails
+              task={{
+                id: '',
+                title: '',
+                is_finish: false,
+                description: '',
+                end_date_scheduled: null,
+                end_date_actual: null,
+              }}
+            />
+          </>
+        ) : (
+          <Button onClick={() => signIn()}>signIn</Button>
+        )}
+      </Box>
+    </Container>
   )
 }
