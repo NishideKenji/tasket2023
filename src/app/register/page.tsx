@@ -6,6 +6,8 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { trpc } from '@/trpc/client'
+
 const taskCreateSchema = z.object({
   username: z.string().nonempty(),
   email: z.string().nonempty().email(),
@@ -13,7 +15,9 @@ const taskCreateSchema = z.object({
 })
 
 export default function RegisterForm() {
-  const { register, handleSubmit, formState } = useForm({
+  const create = trpc.registerRouter.create.useMutation()
+
+  const { register, handleSubmit, formState, reset } = useForm({
     defaultValues: {
       username: '',
       email: '',
@@ -27,8 +31,14 @@ export default function RegisterForm() {
     <Container maxWidth="xs">
       <Box>
         <form
-          onSubmit={handleSubmit((value) => {
-            console.log(value)
+          onSubmit={handleSubmit(async (value) => {
+            try {
+              const res = await create.mutateAsync(value)
+              console.log('Register Success:', res)
+              reset(value)
+            } catch (error) {
+              console.log('Register error:', error)
+            }
           })}
         >
           <h3>Register</h3>
