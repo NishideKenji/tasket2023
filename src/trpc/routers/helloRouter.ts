@@ -14,7 +14,7 @@ export const helloRouter = createTRPCRouter({
       // tRPC API 応答の実装.
       return {
         // コンテキスト `ctx` と入力 `input` を参照できる.
-        greeting: `hello !!, ${opts.input.text}`,
+        greeting: `hello !!, user:${opts.ctx.session?.user?.name} ${opts.input.text}`,
       }
     }),
 })
