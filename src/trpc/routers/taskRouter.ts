@@ -30,4 +30,12 @@ export const taskRouter = createTRPCRouter({
         return newTask //追加されたタスクの内容を返す
       }
     }),
+  list: baseProcedure.query(async (opts) => {
+    if (opts.ctx.session) {
+      const tasks = await opts.ctx.prisma.task.findMany()
+      return {
+        tasks: tasks,
+      }
+    }
+  }),
 })
