@@ -32,7 +32,7 @@ const TaskList = ({ tasks }: Props) => {
           return (
             <TableRow key={task.id}>
               <TableCell>
-                <Link>{index + 1}</Link>
+                <Link href={`/${task.id}`}>{index + 1}</Link>
               </TableCell>
               <TableCell>{task.title}</TableCell>
               <TableCell>
