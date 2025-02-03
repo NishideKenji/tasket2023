@@ -9,8 +9,11 @@ import {
   FormControlLabel,
   TextField,
 } from '@mui/material'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import type { Task } from '@prisma/client'
 import { TRPCClientError } from '@trpc/client'
+import dayjs from 'dayjs'
 import { enqueueSnackbar } from 'notistack'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -21,6 +24,7 @@ import { trpc } from '@/trpc/client'
 interface Props {
   task: Task
 }
+
 const taskCreateSchema = z.object({
   id: z.string().optional(),
   title: z.string().nonempty(),
@@ -29,6 +33,7 @@ const taskCreateSchema = z.object({
   end_date_scheduled: z.date().nullable().optional(),
   end_date_actual: z.date().nullable().optional(),
 })
+
 export default function TaskDetails({ task }: Props) {
   const create = trpc.taskRouter.create.useMutation()
   const { register, handleSubmit, control, formState, reset, setError } =
@@ -102,6 +107,38 @@ export default function TaskDetails({ task }: Props) {
           )}
         />
         <br />
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Controller
+            name="end_date_scheduled"
+            control={control}
+            render={({ field: { onChange, value, ...field } }) => (
+              <DatePicker
+                {...field}
+                label="Scheduled End Date"
+                value={value ? dayjs(value) : null}
+                onChange={(newValue) => onChange(newValue?.toDate() || null)}
+              />
+            )}
+          />
+        </LocalizationProvider>
+        <br />
+        <br />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Controller
+            name="end_date_actual"
+            control={control}
+            render={({ field: { onChange, value, ...field } }) => (
+              <DatePicker
+                {...field}
+                label="Actual End Date"
+                value={value ? dayjs(value) : null}
+                onChange={(newValue) => onChange(newValue?.toDate() || null)}
+              />
+            )}
+          />
+        </LocalizationProvider>
+
         <br />
         <Button
           type="submit"
