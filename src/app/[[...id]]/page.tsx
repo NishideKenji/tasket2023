@@ -4,6 +4,7 @@ import { Box, Button, Container, Grid, Typography } from '@mui/material'
 import type { Task } from '@prisma/client'
 import { useParams } from 'next/navigation'
 import { signIn, useSession } from 'next-auth/react'
+import { useEffect } from 'react'
 
 import { trpc } from '@/trpc/client'
 
@@ -26,6 +27,10 @@ export default function Home() {
 
   const params = useParams()
   const id = params?.id
+
+  useEffect(() => {
+    tasks.refetch()
+  }, [id])
 
   const tasks = trpc.taskRouter.list.useQuery()
 

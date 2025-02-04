@@ -14,8 +14,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import type { Task } from '@prisma/client'
 import { TRPCClientError } from '@trpc/client'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -35,6 +36,8 @@ const taskCreateSchema = z.object({
 })
 
 export default function TaskDetails({ task }: Props) {
+  const router = useRouter()
+
   const create = trpc.taskRouter.create.useMutation()
 
   const update = trpc.taskRouter.update.useMutation()
@@ -49,15 +52,22 @@ export default function TaskDetails({ task }: Props) {
       mode: 'onTouched',
     })
 
+  useEffect(() => {
+    if (task) {
+      reset(task)
+    }
+  }, [task, reset])
+
   return (
     <Box>
       <form
         onSubmit={handleSubmit(async (value) => {
           if (task.id === '') {
             try {
-              await create.mutateAsync(value)
+              const res = await create.mutateAsync(value)
               enqueueSnackbar('Create Success', { variant: 'success' })
-              reset(value)
+              reset(res)
+              router.push(`/${res?.id}`)
             } catch (error) {
               enqueueSnackbar('Create error:', { variant: 'error' })
 
@@ -192,6 +202,7 @@ export default function TaskDetails({ task }: Props) {
             try {
               await taskdelete.mutateAsync({ id: task.id })
               enqueueSnackbar('Task Deleted', { variant: 'success' })
+              router.push(`/`)
             } catch (error) {
               console.log(error)
               enqueueSnackbar('Updated error:', { variant: 'error' })
