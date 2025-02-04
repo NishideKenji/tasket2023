@@ -141,6 +141,7 @@ export default function TaskDetails({ task }: Props) {
                 {...field}
                 label="Scheduled End Date"
                 value={value ? dayjs(value) : null}
+                format="YYYY/MM/DD"
                 onChange={(newValue) => onChange(newValue?.toDate() || null)}
               />
             )}
@@ -157,6 +158,7 @@ export default function TaskDetails({ task }: Props) {
                 {...field}
                 label="Actual End Date"
                 value={value ? dayjs(value) : null}
+                format="YYYY/MM/DD"
                 onChange={(newValue) => onChange(newValue?.toDate() || null)}
               />
             )}
