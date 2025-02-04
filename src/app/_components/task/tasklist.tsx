@@ -1,6 +1,5 @@
 import {
   Checkbox,
-  Link,
   Table,
   TableBody,
   TableCell,
@@ -9,6 +8,7 @@ import {
 } from '@mui/material'
 import { type Task } from '@prisma/client'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 
 interface Props {
   tasks: Task[]
