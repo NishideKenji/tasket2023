@@ -15,7 +15,7 @@ import type { Task } from '@prisma/client'
 import { TRPCClientError } from '@trpc/client'
 import dayjs from 'dayjs'
 import { enqueueSnackbar } from 'notistack'
-import React from 'react'
+import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -39,6 +39,9 @@ export default function TaskDetails({ task }: Props) {
 
   const update = trpc.taskRouter.update.useMutation()
 
+  const taskdelete = trpc.taskRouter.delete.useMutation()
+
+  const [isSubmittingDelete, setIsSubmittingDelete] = useState(false)
   const { register, handleSubmit, control, formState, reset, setError } =
     useForm({
       defaultValues: task,
@@ -174,6 +177,28 @@ export default function TaskDetails({ task }: Props) {
           <Alert severity="error">{formState.errors.root?.message}</Alert>
         )}
       </form>
+
+      <br />
+      <Button
+        disabled={isSubmittingDelete || task.id === ''}
+        type="submit"
+        variant="contained"
+        color="warning"
+        onClick={async () => {
+          setIsSubmittingDelete(true)
+          if (task.id !== '') {
+            try {
+              await taskdelete.mutateAsync({ id: task.id })
+              enqueueSnackbar('Task Deleted', { variant: 'success' })
+            } catch (error) {
+              console.log(error)
+              enqueueSnackbar('Updated error:', { variant: 'error' })
+            }
+          }
+        }}
+      >
+        Delete
+      </Button>
     </Box>
   )
 }
