@@ -44,6 +44,10 @@ export default function TaskDetails({ task }: Props) {
 
   const taskdelete = trpc.taskRouter.delete.useMutation()
 
+  const { refetch: listRefetch } = trpc.taskRouter.list.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  })
+
   const [isSubmittingDelete, setIsSubmittingDelete] = useState(false)
   const { register, handleSubmit, control, formState, reset, setError } =
     useForm({
@@ -67,6 +71,7 @@ export default function TaskDetails({ task }: Props) {
               const res = await create.mutateAsync(value)
               enqueueSnackbar('Create Success', { variant: 'success' })
               reset(res)
+              listRefetch()
               router.push(`/${res?.id}`)
             } catch (error) {
               enqueueSnackbar('Create error:', { variant: 'error' })
@@ -83,6 +88,7 @@ export default function TaskDetails({ task }: Props) {
               await update.mutateAsync(value)
               enqueueSnackbar('Updated Success', { variant: 'success' })
               reset(value)
+              listRefetch()
             } catch (error) {
               enqueueSnackbar('Updated error:', { variant: 'error' })
 
@@ -202,6 +208,7 @@ export default function TaskDetails({ task }: Props) {
             try {
               await taskdelete.mutateAsync({ id: task.id })
               enqueueSnackbar('Task Deleted', { variant: 'success' })
+              listRefetch()
               router.push(`/`)
             } catch (error) {
               console.log(error)
