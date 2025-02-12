@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, Container, Grid2, Paper, Typography } from '@mui/material'
+import { Button, Container, Grid2, Paper, Typography } from '@mui/material'
 import type { Task } from '@prisma/client'
 import { useParams } from 'next/navigation'
 import { signIn, useSession } from 'next-auth/react'
@@ -42,32 +42,30 @@ export default function Home() {
 
   return (
     <Container maxWidth={false}>
-      <Box sx={{ p: 1, mt: 1 }}>
-        {session ? (
-          <Grid2 container spacing={3}>
-            <Grid2 size={6} sx={{ p: 2 }}>
-              <Typography variant="h5" gutterBottom>
-                Task List
-              </Typography>
-              <TaskList tasks={tasks || []} />
-            </Grid2>
-            <Grid2 size={6} sx={{ p: 2, borderLeft: '1px solid #ccc' }}>
-              <Typography variant="h5" gutterBottom>
-                {id ? 'Details and Edit Task' : 'Create New Task'}
-              </Typography>
-              <Paper sx={{ p: 2 }}>
-                {id ? (
-                  task && <TaskDetails task={task} />
-                ) : (
-                  <TaskDetails task={defaultTask()} />
-                )}
-              </Paper>
-            </Grid2>
+      {session ? (
+        <Grid2 container spacing={1} sx={{ p: 1, mt: 3 }}>
+          <Grid2 size={6} sx={{ p: 2 }}>
+            <Typography variant="h5" gutterBottom>
+              Task List
+            </Typography>
+            <TaskList tasks={tasks || []} />
           </Grid2>
-        ) : (
-          <Button onClick={() => signIn()}>signIn</Button>
-        )}
-      </Box>
+          <Grid2 size={6} sx={{ p: 2, borderLeft: '1px solid #ccc' }}>
+            <Typography variant="h5" gutterBottom>
+              {id ? 'Details and Edit Task' : 'Create New Task'}
+            </Typography>
+            <Paper sx={{ p: 2 }}>
+              {id ? (
+                task && <TaskDetails task={task} />
+              ) : (
+                <TaskDetails task={defaultTask()} />
+              )}
+            </Paper>
+          </Grid2>
+        </Grid2>
+      ) : (
+        <Button onClick={() => signIn()}>signIn</Button>
+      )}
     </Container>
   )
 }
