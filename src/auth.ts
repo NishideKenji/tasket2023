@@ -8,12 +8,10 @@ import prisma from '@/server/prisma'
 export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
-      // サインインフォームに表示する名前 (例: "Sign in with...")
-      name: 'Credentials POC',
-      // 認証情報は、サインインページに適切なフォームを生成するために使用されます。
-      // 送信されることを期待するフィールドを何でも指定することができます。
-      // 例: ドメイン、ユーザー名、パスワード、2FAトークンなど。
-      // オブジェクトを通して、任意の HTML 属性を <input> タグに渡すことができます。
+      // サインインフォームに表示する名前
+      name: 'Sign in',
+
+      // 認証情報のラベルとタイプ
       credentials: {
         username: {
           label: 'ユーザー名',
@@ -22,17 +20,24 @@ export const authOptions: AuthOptions = {
         },
         password: { label: 'パスワード', type: 'password' },
       },
+
+      // サインインフォームの送信時に呼び出される関数
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async authorize(credentials, req) {
         if (!credentials) {
           throw new Error('Credentials are required')
         }
+
+        // 渡されたクレデンシャルからユーザー名とパスワードを取り出す
         const { username, password } = credentials
 
-        // ここにロジックを追加して、提供されたクレデンシャルからユーザーを検索します。
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let user: any = null
+        let user: {
+          id: string
+          name: string | null
+          email: string | null
+        } | null = null
 
+        // クレデンシャル側のユーザー名と一致するユーザーをデータベースから取得する
         const ans = await prisma.user.findFirst({
           where: {
             AND: {
@@ -43,12 +48,13 @@ export const authOptions: AuthOptions = {
           },
         })
 
+        // ユーザーが見つかった場合、パスワードを検証する
         if (ans) {
           const comparePassword = await bcrypt.compare(
             password,
             ans.crypted_password!,
           )
-          //console.log(comparePassword);
+          // パスワードが一致した場合、ユーザー情報を返す
           if (comparePassword) {
             user = { id: ans.id, name: ans.name, email: ans.email }
           }
@@ -60,8 +66,6 @@ export const authOptions: AuthOptions = {
         } else {
           // もし、NULLを返した場合は、ユーザーに詳細を確認するよう促すエラーが表示されます。
           return null
-
-          // また、このコールバックをエラーで拒否することもできます。この場合、ユーザーはエラーメッセージをクエリパラメータとして持つエラーページに送られます。
         }
       },
     }),
