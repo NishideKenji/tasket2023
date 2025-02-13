@@ -7,6 +7,8 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  Grid2,
+  Paper,
   TextField,
 } from '@mui/material'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
@@ -64,161 +66,182 @@ export default function TaskDetails({ task }: Props) {
 
   return (
     <Box>
-      <form
-        onSubmit={handleSubmit(async (value) => {
-          if (task.id === '') {
-            try {
-              const res = await create.mutateAsync(value)
-              enqueueSnackbar('Create Success', { variant: 'success' })
-              reset(res)
-              listRefetch()
-              router.push(`/${res?.id}`)
-            } catch (error) {
-              enqueueSnackbar('Create error:', { variant: 'error' })
+      <Paper sx={{ p: 2 }}>
+        <form
+          onSubmit={handleSubmit(async (value) => {
+            if (task.id === '') {
+              try {
+                const res = await create.mutateAsync(value)
+                enqueueSnackbar('Create Success', { variant: 'success' })
+                reset(res)
+                listRefetch()
+                router.push(`/${res?.id}`)
+              } catch (error) {
+                enqueueSnackbar('Create error:', { variant: 'error' })
 
-              if (error instanceof TRPCClientError) {
-                setError('root', {
-                  type: 'manual',
-                  message: error.message,
-                })
+                if (error instanceof TRPCClientError) {
+                  setError('root', {
+                    type: 'manual',
+                    message: error.message,
+                  })
+                }
+              }
+            } else {
+              try {
+                await update.mutateAsync(value)
+                enqueueSnackbar('Updated Success', { variant: 'success' })
+                reset(value)
+                listRefetch()
+              } catch (error) {
+                enqueueSnackbar('Updated error:', { variant: 'error' })
+
+                if (error instanceof TRPCClientError) {
+                  setError('root', {
+                    type: 'manual',
+                    message: error.message,
+                  })
+                }
               }
             }
-          } else {
-            try {
-              await update.mutateAsync(value)
-              enqueueSnackbar('Updated Success', { variant: 'success' })
-              reset(value)
-              listRefetch()
-            } catch (error) {
-              enqueueSnackbar('Updated error:', { variant: 'error' })
+          })}
+        >
+          <Grid2 container spacing={1} sx={{ mb: 0 }}>
+            <Grid2 size={12} sx={{}}>
+              <TextField
+                {...register('title')}
+                fullWidth
+                margin={'normal'}
+                label="Title"
+                type="text"
+                error={
+                  formState.touchedFields.title &&
+                  Boolean(formState.errors.title)
+                }
+                helperText={
+                  formState.touchedFields.title &&
+                  formState.errors?.title?.message
+                }
+              />
+            </Grid2>
+            <Grid2 size={12} sx={{}}>
+              <TextField
+                {...register('description')}
+                fullWidth
+                margin={'normal'}
+                multiline
+                rows={10}
+                label="Description"
+                type="text"
+                error={
+                  formState.touchedFields.description &&
+                  Boolean(formState.errors.description)
+                }
+                helperText={
+                  formState.touchedFields.description &&
+                  formState.errors?.description?.message
+                }
+              />
+            </Grid2>
+            <Grid2 size={12} sx={{}}>
+              <Controller
+                name="is_finish"
+                control={control}
+                render={({ field }) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        {...field}
+                        checked={field.value}
+                        color="primary"
+                      />
+                    }
+                    label="Finish"
+                  />
+                )}
+              />
+            </Grid2>
 
-              if (error instanceof TRPCClientError) {
-                setError('root', {
-                  type: 'manual',
-                  message: error.message,
-                })
-              }
-            }
-          }
-        })}
-      >
-        <TextField
-          {...register('title')}
-          fullWidth
-          margin={'normal'}
-          label="Title"
-          type="text"
-          error={
-            formState.touchedFields.title && Boolean(formState.errors.title)
-          }
-          helperText={
-            formState.touchedFields.title && formState.errors?.title?.message
-          }
-        />
-        <TextField
-          {...register('description')}
-          fullWidth
-          margin={'normal'}
-          multiline
-          rows={10}
-          label="Description"
-          type="text"
-          error={
-            formState.touchedFields.description &&
-            Boolean(formState.errors.description)
-          }
-          helperText={
-            formState.touchedFields.description &&
-            formState.errors?.description?.message
-          }
-        />
-        <br />
-        <br />
-        <Controller
-          name="is_finish"
-          control={control}
-          render={({ field }) => (
-            <FormControlLabel
-              control={
-                <Checkbox {...field} checked={field.value} color="primary" />
-              }
-              label="Finish"
-            />
+            <Grid2 size={6} sx={{}}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Controller
+                  name="end_date_scheduled"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <DatePicker
+                      {...field}
+                      label="Scheduled End Date"
+                      value={value ? dayjs(value) : null}
+                      format="YYYY/MM/DD"
+                      onChange={(newValue) =>
+                        onChange(newValue?.toDate() || null)
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </Grid2>
+            <Grid2 size={6} sx={{}}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Controller
+                  name="end_date_actual"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <DatePicker
+                      {...field}
+                      label="Actual End Date"
+                      value={value ? dayjs(value) : null}
+                      format="YYYY/MM/DD"
+                      onChange={(newValue) =>
+                        onChange(newValue?.toDate() || null)
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            </Grid2>
+            <Grid2 size={6} sx={{}}>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={
+                  !formState.isValid ||
+                  !formState.isDirty ||
+                  formState.isSubmitting
+                }
+              >
+                {task.id === '' ? 'Create' : 'Update'}
+              </Button>
+            </Grid2>
+          </Grid2>
+          {formState.isSubmitted && !formState.isSubmitSuccessful && (
+            <Alert severity="error">{formState.errors.root?.message}</Alert>
           )}
-        />
-        <br />
-
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Controller
-            name="end_date_scheduled"
-            control={control}
-            render={({ field: { onChange, value, ...field } }) => (
-              <DatePicker
-                {...field}
-                label="Scheduled End Date"
-                value={value ? dayjs(value) : null}
-                format="YYYY/MM/DD"
-                onChange={(newValue) => onChange(newValue?.toDate() || null)}
-              />
-            )}
-          />
-        </LocalizationProvider>
-        <br />
-        <br />
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Controller
-            name="end_date_actual"
-            control={control}
-            render={({ field: { onChange, value, ...field } }) => (
-              <DatePicker
-                {...field}
-                label="Actual End Date"
-                value={value ? dayjs(value) : null}
-                format="YYYY/MM/DD"
-                onChange={(newValue) => onChange(newValue?.toDate() || null)}
-              />
-            )}
-          />
-        </LocalizationProvider>
-
-        <br />
+        </form>
+      </Paper>
+      <Paper sx={{ p: 2 }}>
         <Button
+          disabled={isSubmittingDelete || task.id === ''}
           type="submit"
           variant="contained"
-          disabled={
-            !formState.isValid || !formState.isDirty || formState.isSubmitting
-          }
-        >
-          {task.id === '' ? 'Create' : 'Update'}
-        </Button>
-        {formState.isSubmitted && !formState.isSubmitSuccessful && (
-          <Alert severity="error">{formState.errors.root?.message}</Alert>
-        )}
-      </form>
-
-      <br />
-      <Button
-        disabled={isSubmittingDelete || task.id === ''}
-        type="submit"
-        variant="contained"
-        color="warning"
-        onClick={async () => {
-          setIsSubmittingDelete(true)
-          if (task.id !== '') {
-            try {
-              await taskdelete.mutateAsync({ id: task.id })
-              enqueueSnackbar('Task Deleted', { variant: 'success' })
-              listRefetch()
-              router.push(`/`)
-            } catch (error) {
-              console.log(error)
-              enqueueSnackbar('Updated error:', { variant: 'error' })
+          color="warning"
+          onClick={async () => {
+            setIsSubmittingDelete(true)
+            if (task.id !== '') {
+              try {
+                await taskdelete.mutateAsync({ id: task.id })
+                enqueueSnackbar('Task Deleted', { variant: 'success' })
+                listRefetch()
+                router.push(`/`)
+              } catch (error) {
+                console.log(error)
+                enqueueSnackbar('Updated error:', { variant: 'error' })
+              }
             }
-          }
-        }}
-      >
-        Delete
-      </Button>
+          }}
+        >
+          Delete
+        </Button>
+      </Paper>
     </Box>
   )
 }

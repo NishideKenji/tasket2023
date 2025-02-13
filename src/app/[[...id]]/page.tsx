@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Container, Grid2, Paper, Typography } from '@mui/material'
+import { Button, Container, Grid2, Typography } from '@mui/material'
 import type { Task } from '@prisma/client'
 import { useParams } from 'next/navigation'
 import { signIn, useSession } from 'next-auth/react'
@@ -54,13 +54,11 @@ export default function Home() {
             <Typography variant="h5" gutterBottom>
               {id ? 'Details and Edit Task' : 'Create New Task'}
             </Typography>
-            <Paper sx={{ p: 2 }}>
-              {id ? (
-                task && <TaskDetails task={task} />
-              ) : (
-                <TaskDetails task={defaultTask()} />
-              )}
-            </Paper>
+            {id ? (
+              task && <TaskDetails task={task} />
+            ) : (
+              <TaskDetails task={defaultTask()} />
+            )}
           </Grid2>
         </Grid2>
       ) : (
