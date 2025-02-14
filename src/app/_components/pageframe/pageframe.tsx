@@ -1,3 +1,5 @@
+'use client'
+import { SnackbarProvider } from 'notistack'
 import type { ReactNode } from 'react'
 
 import NavBar from './NavBar'
@@ -8,8 +10,12 @@ interface Props {
 export const PageFrame = ({ children }: Props) => {
   return (
     <>
-      <NavBar />
-      <main>{children}</main>
+      <SnackbarProvider
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <NavBar />
+        <main>{children}</main>
+      </SnackbarProvider>
     </>
   )
 }

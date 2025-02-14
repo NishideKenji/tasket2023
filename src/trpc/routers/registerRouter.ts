@@ -18,18 +18,17 @@ export const registerRouter = createTRPCRouter({
         email: opt.input.email,
         password: opt.input.password,
       }
-      console.log(Input)
       const saltRounds = 10
       const password = Input.password
       const hashedPassword = await bcrypt.hash(password, saltRounds)
-      const newUser = await opt.ctx.prisma.user.create({
+      await opt.ctx.prisma.user.create({
         data: {
           email: Input.email,
           name: Input.username,
           crypted_password: hashedPassword,
         },
       })
-      console.log(newUser)
+
       // 戻り値。
       const Answer = {
         username: opt.input.username,
