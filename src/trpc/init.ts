@@ -1,6 +1,8 @@
 import { initTRPC } from '@trpc/server'
 import { cache } from 'react'
 
+import prisma from '@/server/prisma'
+
 import { transformer } from './shared'
 
 /**
@@ -20,7 +22,7 @@ export const createTRPCContext = cache(async () => {
   /**
    * @see: https://trpc.io/docs/server/context
    */
-  return {} // (コンテキストの例) Authorization ヘッダをパースしてユーザーIDを取り出す, など...
+  return { prisma } // (コンテキストの例) Authorization ヘッダをパースしてユーザーIDを取り出す, など...
   // そのほかprisma導入後はdb情報などもここを経由する
 })
 
