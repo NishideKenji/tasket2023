@@ -13,7 +13,7 @@ export const helloRouter = createTRPCRouter({
     .query((opts) => {
       return {
         // hello !! と入力値を返す
-        ans: `hello !!, ${opts.input.text}`,
+        ans: `hello !!, user:${opts.ctx.session?.user?.name}  ${opts.input.text}`,
       }
     }),
 })
