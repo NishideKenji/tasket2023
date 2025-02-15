@@ -1,3 +1,4 @@
+import { CssBaseline } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import type { Metadata } from 'next'
@@ -28,6 +29,7 @@ export default async function RootLayout({
           <ThemeProvider theme={theme}>
             <TRPCProvider>
               <Providers session={session}>
+                <CssBaseline />
                 <PageFrame>{children}</PageFrame>
               </Providers>
             </TRPCProvider>

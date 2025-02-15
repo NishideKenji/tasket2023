@@ -14,7 +14,7 @@ const defaultTask = (): Task => {
   return {
     id: '',
     title: '',
-    is_finish: true,
+    is_finish: false,
     description: '',
     end_date_scheduled: null,
     end_date_actual: null,
