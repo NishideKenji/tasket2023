@@ -214,6 +214,8 @@ export const TaskDetails = ({ task }: Props) => {
           if (task.id !== '') {
             try {
               await taskdelete.mutateAsync({ id: task.id })
+              listRefetch()
+              router.push(`/`)
               enqueueSnackbar('Task Deleted', { variant: 'success' })
             } catch (error) {
               console.log(error)
