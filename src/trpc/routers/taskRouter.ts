@@ -54,4 +54,34 @@ export const taskRouter = createTRPCRouter({
         return task
       }
     }),
+
+  update: baseProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        is_finish: z.boolean(),
+        description: z.string().nullable(),
+        end_date_scheduled: z.date().nullable(),
+        end_date_actual: z.date().nullable(),
+      }),
+    )
+    .mutation(async (opt) => {
+      // セッション情報を取得
+      if (opt.ctx.session) {
+        const updatedTask = await opt.ctx.prisma.task.update({
+          where: {
+            id: opt.input.id,
+          },
+          data: {
+            title: opt.input.title,
+            is_finish: opt.input.is_finish,
+            description: opt.input.description,
+            end_date_scheduled: opt.input.end_date_scheduled,
+            end_date_actual: opt.input.end_date_actual,
+          },
+        })
+        return updatedTask // 新しい投稿を返します
+      }
+    }),
 })

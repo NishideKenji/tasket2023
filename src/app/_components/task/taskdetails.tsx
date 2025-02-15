@@ -15,6 +15,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import type { Task } from '@prisma/client'
 import { TRPCClientError } from '@trpc/client'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -35,7 +36,15 @@ const taskCreateSchema = z.object({
   end_date_actual: z.date().nullable().optional(),
 })
 export const TaskDetails = ({ task }: Props) => {
+  const router = useRouter()
+
   const create = trpc.taskRouter.create.useMutation()
+  const update = trpc.taskRouter.update.useMutation()
+
+  const { refetch: listRefetch } = trpc.taskRouter.list.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  })
+
   const { register, handleSubmit, control, formState, reset, setError } =
     useForm({
       defaultValues: task,
@@ -47,17 +56,36 @@ export const TaskDetails = ({ task }: Props) => {
     <Box>
       <form
         onSubmit={handleSubmit(async (value) => {
-          try {
-            await create.mutateAsync(value)
-            enqueueSnackbar('Create Success', { variant: 'success' })
-            reset(value)
-          } catch (error) {
-            enqueueSnackbar('Create error:', { variant: 'error' })
-            if (error instanceof TRPCClientError) {
-              setError('root', {
-                type: 'manual',
-                message: error.message,
-              })
+          if (task.id === '') {
+            try {
+              const res = await create.mutateAsync(value)
+              enqueueSnackbar('Create Success', { variant: 'success' })
+              reset(value)
+              listRefetch()
+              router.push(`/${res?.id}`)
+            } catch (error) {
+              enqueueSnackbar('Create error:', { variant: 'error' })
+              if (error instanceof TRPCClientError) {
+                setError('root', {
+                  type: 'manual',
+                  message: error.message,
+                })
+              }
+            }
+          } else {
+            try {
+              await update.mutateAsync(value)
+              enqueueSnackbar('Updated Success', { variant: 'success' })
+              reset(value)
+              listRefetch()
+            } catch (error) {
+              enqueueSnackbar('Updated error:', { variant: 'error' })
+              if (error instanceof TRPCClientError) {
+                setError('root', {
+                  type: 'manual',
+                  message: error.message,
+                })
+              }
             }
           }
         })}
@@ -165,7 +193,7 @@ export const TaskDetails = ({ task }: Props) => {
                 formState.isSubmitting
               }
             >
-              Create
+              {task.id === '' ? 'Create' : 'Update'}
             </Button>
           </Grid2>
         </Grid2>
