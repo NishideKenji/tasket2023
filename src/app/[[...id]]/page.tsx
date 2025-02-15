@@ -1,6 +1,7 @@
 'use client'
 
 import { Button, Container, Grid2, Typography } from '@mui/material'
+import type { Task } from '@prisma/client'
 import { useParams } from 'next/navigation'
 import { signIn, useSession } from 'next-auth/react'
 
@@ -8,6 +9,17 @@ import { trpc } from '@/trpc/client'
 
 import { TaskDetails } from '../_components/task/taskdetails'
 import { TaskList } from '../_components/task/tasklist'
+
+const defaultTask = (): Task => {
+  return {
+    id: '',
+    title: '',
+    is_finish: true,
+    description: '',
+    end_date_scheduled: null,
+    end_date_actual: null,
+  }
+}
 
 export default function Home() {
   const { data: session } = useSession()
@@ -18,6 +30,15 @@ export default function Home() {
   const { data: tasks } = trpc.taskRouter.list.useQuery(undefined, {
     refetchOnWindowFocus: false,
   })
+
+  const { data: task } = trpc.taskRouter.get.useQuery(
+    {
+      id: id ? id.toString() : '',
+    },
+    {
+      refetchOnWindowFocus: false,
+    },
+  )
 
   return (
     <Container maxWidth={false}>
@@ -32,18 +53,13 @@ export default function Home() {
             </Grid2>
             <Grid2 size={6} sx={{ p: 2, borderLeft: '1px solid #ccc' }}>
               <Typography variant="h5" gutterBottom>
-                {id ? `ID : ${id}` : 'Create New Task'}
+                {id ? 'Details and Edit Task' : 'Create New Task'}
               </Typography>
-              <TaskDetails
-                task={{
-                  id: '',
-                  title: '',
-                  is_finish: false,
-                  description: '',
-                  end_date_scheduled: null,
-                  end_date_actual: null,
-                }}
-              />
+              {id ? (
+                task && <TaskDetails task={task} />
+              ) : (
+                <TaskDetails task={defaultTask()} />
+              )}
             </Grid2>
           </Grid2>
         </>

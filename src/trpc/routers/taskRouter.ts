@@ -37,4 +37,21 @@ export const taskRouter = createTRPCRouter({
       return tasks
     }
   }),
+
+  get: baseProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async (opts) => {
+      if (opts.ctx.session) {
+        const task = await opts.ctx.prisma.task.findUnique({
+          where: {
+            id: opts.input.id,
+          },
+        })
+        return task
+      }
+    }),
 })
