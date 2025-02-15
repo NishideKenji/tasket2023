@@ -1,15 +1,19 @@
 'use client'
 
 import { Button, Container, Grid2, Typography } from '@mui/material'
+import { useParams } from 'next/navigation'
 import { signIn, useSession } from 'next-auth/react'
 
 import { trpc } from '@/trpc/client'
 
-import { TaskDetails } from './_components/task/taskdetails'
-import { TaskList } from './_components/task/tasklist'
+import { TaskDetails } from '../_components/task/taskdetails'
+import { TaskList } from '../_components/task/tasklist'
 
 export default function Home() {
   const { data: session } = useSession()
+
+  const params = useParams()
+  const id = params?.id
 
   const { data: tasks } = trpc.taskRouter.list.useQuery(undefined, {
     refetchOnWindowFocus: false,
@@ -28,7 +32,7 @@ export default function Home() {
             </Grid2>
             <Grid2 size={6} sx={{ p: 2, borderLeft: '1px solid #ccc' }}>
               <Typography variant="h5" gutterBottom>
-                Create New Task
+                {id ? `ID : ${id}` : 'Create New Task'}
               </Typography>
               <TaskDetails
                 task={{

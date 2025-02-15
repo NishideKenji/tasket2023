@@ -8,6 +8,7 @@ import {
 } from '@mui/material'
 import { type Task } from '@prisma/client'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 
 interface Props {
   tasks: Task[]
@@ -30,7 +31,9 @@ export const TaskList = ({ tasks }: Props) => {
         {tasks.map((task, index) => {
           return (
             <TableRow key={task.id}>
-              <TableCell>{index + 1}</TableCell>
+              <TableCell>
+                <Link href={`/${task.id}`}>{index + 1}</Link>
+              </TableCell>
               <TableCell>{task.title}</TableCell>
               <TableCell>
                 <Checkbox disabled={true} checked={task.is_finish} />
