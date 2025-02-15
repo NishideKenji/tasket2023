@@ -84,4 +84,22 @@ export const taskRouter = createTRPCRouter({
         return updatedTask // 新しい投稿を返します
       }
     }),
+
+  delete: baseProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async (opt) => {
+      // セッション情報を取得し、存在する場合のみ処理する
+      if (opt.ctx.session) {
+        const deletedTask = await opt.ctx.prisma.task.delete({
+          where: {
+            id: opt.input.id,
+          },
+        })
+        return deletedTask //削除したタスクの内容を返します
+      }
+    }),
 })

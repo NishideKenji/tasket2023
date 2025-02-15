@@ -17,7 +17,7 @@ import { TRPCClientError } from '@trpc/client'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import { enqueueSnackbar } from 'notistack'
-import React from 'react'
+import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -40,6 +40,8 @@ export const TaskDetails = ({ task }: Props) => {
 
   const create = trpc.taskRouter.create.useMutation()
   const update = trpc.taskRouter.update.useMutation()
+  const taskdelete = trpc.taskRouter.delete.useMutation()
+  const [isSubmittingDelete, setIsSubmittingDelete] = useState(false)
 
   const { refetch: listRefetch } = trpc.taskRouter.list.useQuery(undefined, {
     refetchOnWindowFocus: false,
@@ -201,6 +203,27 @@ export const TaskDetails = ({ task }: Props) => {
           <Alert severity="error">{formState.errors.root?.message}</Alert>
         )}
       </form>
+      <Button
+        disabled={isSubmittingDelete || task.id === ''}
+        type="submit"
+        variant="contained"
+        color="warning"
+        sx={{ mt: 2 }}
+        onClick={async () => {
+          setIsSubmittingDelete(true)
+          if (task.id !== '') {
+            try {
+              await taskdelete.mutateAsync({ id: task.id })
+              enqueueSnackbar('Task Deleted', { variant: 'success' })
+            } catch (error) {
+              console.log(error)
+              enqueueSnackbar('Updated error:', { variant: 'error' })
+            }
+          }
+        }}
+      >
+        Delete
+      </Button>
     </Box>
   )
 }
